@@ -38,5 +38,17 @@ HTTP Libary
 
 
 
+## Steop02
+
+![image-20240331194734755](images/image-20240331194734755.png)
+
+Actix的并发（concurrency）
+
+Actix支持两类并发：
+
+1.异步I/O:给定 的OS原生线程在等待I/O时执行 其他任务（例如：侦听网络连接）
+
+2.多线程并行：默认情况下启动OS原生线程的数量与系统逻辑CPU数量相同
+
 
 
