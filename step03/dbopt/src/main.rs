@@ -25,7 +25,17 @@ async fn main() -> io::Result<()> {
     .fetch_all(&db_pool)
     .await
     .unwrap();
-    println!("Course rows: {:?}", course_rows);
 
+    println!("Course rows: {:?}", course_rows);
+    let mut course_list = vec![];
+    for row in course_rows {
+        course_list.push(Course {
+            id: row.id,
+            teacher_id: row.teacher_id,
+            name: row.name,
+            time: Some(chrono::NaiveDateTime::from(row.time.unwrap())),
+        })
+    }
+    println!("course_list : {:?}", course_list);
     Ok(())
 }
