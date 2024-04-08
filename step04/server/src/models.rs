@@ -9,6 +9,7 @@ pub struct Course {
     pub name: String,
     pub time: Option<NaiveDateTime>,
 }
+
 impl From<web::Json<Course>> for Course {
     fn from(course: web::Json<Course>) -> Self {
         Course {

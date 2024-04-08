@@ -1,4 +1,4 @@
-use crate::models::*;
+use crate::models::Course;
 use chrono::NaiveDateTime;
 use sqlx::PgPool;
 
@@ -21,4 +21,43 @@ pub async fn get_courses_for_teacher_db(pool: &PgPool, teacher_id: i32) -> Vec<C
             time: Some(NaiveDateTime::from(r.time.unwrap())),
         })
         .collect()
+}
+
+pub async fn get_course_details_db(pool: &PgPool, teacher_id: i32, course_id: i32) -> Course {
+    let row = sqlx::query!(
+        r#"SELECT id, teacher_id, name, time
+            FROM course
+            WHERE teacher_id = $1 and id = $2"#,
+        teacher_id,
+        course_id
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap();
+
+    Course {
+        id: Some(row.id),
+        teacher_id: row.teacher_id,
+        name: row.name.clone(),
+        time: Some(NaiveDateTime::from(row.time.unwrap())),
+    }
+}
+pub async fn post_new_course_db(pool: &PgPool, new_course: Course) -> Course {
+    let row = sqlx::query!(
+        r#"INSERT INTO course (id, teacher_id, name)
+            VALUES ($1, $2, $3)
+            RETURNING id, teacher_id, name, time"#,
+        new_course.id.unwrap(),
+        new_course.teacher_id,
+        new_course.name,
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap();
+    Course {
+        id: Some(row.id),
+        teacher_id: row.teacher_id,
+        name: row.name.clone(),
+        time: Some(NaiveDateTime::from(row.time.unwrap())),
+    }
 }
