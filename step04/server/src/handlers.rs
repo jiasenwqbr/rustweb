@@ -61,4 +61,20 @@ mod tests {
         let resp = get_courses_for_teacher(app_state, teacher_id).await;
         assert_eq!(resp.status(), StatusCode::OK);
     }
+
+    #[actix_rt::test]
+    async fn get_one_course_success() {
+        dotenv().ok();
+        let db_url = env::var("DATABASE_URL").expect("DATABASE_URL 没有在 .env 文件里设置");
+        let db_pool = PgPoolOptions::new().connect(&db_url).await.unwrap();
+        let app_state: web::Data<AppState> = web::Data::new(AppState {
+            health_check_response: "".to_string(),
+            visit_count: Mutex::new(0),
+            db: db_pool,
+        });
+
+        let params: web::Path<(usize, usize)> = web::Path::from((1, 1));
+        let resp = get_course_detail(app_state, params).await;
+        assert_eq!(resp.status(), StatusCode::OK);
+    }
 }
